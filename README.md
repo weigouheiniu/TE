@@ -1,2 +1,2 @@
 # TE
-Transfer Entropy Calculation
+Try to calculate Transfer Entropy
