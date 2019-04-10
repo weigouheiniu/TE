@@ -1,61 +1,46 @@
 function DataOut = TEprepare(varargin)
+%Prepare.m 处理初始数据集
+% 检查输入数据和参数，同时优化嵌入参数，加入数据的一个子结构
+% dataout=TEprepare(cfg, data)
 
-% TEPREPARE this function checks the input data and parameter for
-% completeness and correctness. Further, it optimizes the embedding
-% parameters and adds a substructure to the data, which is nesseccary for
-% the further functions.
-% TEPREPARE has to be performed on all datasets first!!!
-%
-% You can call this function directly as follows:
-%         dataout=TEprepare(cfg, data)
-%
-% * DEPENDENCIES
-%     - Package TSTOOL is used at nearest neighbors searches
-%       required for the KSG estimator. (Gnu Public License)
-%       http://www.dpi.physik.uni-goettingen.de/tstool/
-%     - The following Matlab toolboxes:
-%         - signal processing toolbox
-%         - statistic toolbox
-%     - For parallel computing
-%         - parallel computing toolbox (distributed computing toolbox)
-%     - The functions
-%         - TEactdetect
-%         - TEchannelselect
-%         - TEtrialselect
-%         - TEwait
-%         - TEconsoleoutput
+% 用了几个Matlab的工具箱：
+% TSTOOL 用于KSG estimator需要的最邻近搜索* DEPENDENCIES
+% signal processing toolbox
+% statistic toolbox
+% parallel computing toolbox 用于分布式计算
+
+% 用了如下几个函数：
+%   TEactdetect
+%   TEchannelselect
+%   TEtrialselect
+%   TEwait
+%   TEconsoleoutput
 %
 %
-% * INPUT PARAMETERS
+% INPUT PARAMETERS
 %
-%   data           = Fieldtrip raw data structure - it MUST contain:
-%       .trial    = cell array (nr of channels x nr of samples) containing
-%                    the data for each trial
-%       .time      = cell (1xnr of samples) containing the time indices for
-%                    each trial (in seconds)
-%       .label     = cell (1xnr of channels), containing the labels
-%                    (strings) of channels included in the data
-%       .fsample   = value of sampling rate (in Hertz)
-%   in case of fMRI data obtained from the function TEnifti2TRENTOOL_3D
-%   additionally:
-%       .datatype  = 'fMRI'
-%       .outputtype= '3DAsTrial', '3DAsEmbed' or 'SingleVoxel' - see help
-%                     of the function TEnifti2TRENTOOL_3D
+% data           = Fieldtrip raw data structure - it MUST contain:
+%      .trial    = cell array (nr of channels x nr of samples) containing
+%                  the data for each trial
+%      .time     = cell (1xnr of samples) containing the time indices for
+%                  each trial (in seconds)
+%      .label    = cell (1xnr of channels), containing the labels
+%                  (strings) of channels included in the data
+%      .fsample  = value of sampling rate (in Hertz)
+
 %
-% AND
+% cfg: The configuration MUST contain:
 %
-%  cfg: The configuration MUST contain:
+% cfg.sgncmb      = list of channelpairs
+%                   cell array (Nx(source, target))
+% or
+% cfg.channel     = list of channels - testing will be done all-by-all
 %
-%  cfg.sgncmb      = list of channelpairs
-%                    cell array (Nx(source, target))
-%  or
-%  cfg.channel     = list of channels - testing will be done all-by-all
+% and
 %
-%  and
-%
-%  cfg.toi         = the time range of interest (vector 1 x 2) in seconds
+% cfg.toi         = the time range of interest (vector 1 x 2) in seconds
 %                    e.g. (time_from, time_to) (units: seconds)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %   WARNING:
 %   The span of time needed for embedding is: (max(dim)-1)*max(tau)
 %   The prediction time starts after this embedding time. Hence the span of
