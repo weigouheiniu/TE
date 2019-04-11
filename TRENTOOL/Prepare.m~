@@ -1,5 +1,4 @@
-function DataOut = TEprepare(varargin)
-
+function DataOut = Prepare(varargin)
 %Prepare.m 处理初始数据集
 % 检查输入数据和参数，同时优化嵌入参数，加入数据的一个子结构
 % dataout=TEprepare(cfg, data)
@@ -17,13 +16,14 @@ function DataOut = TEprepare(varargin)
 %   TEwait
 %   TEconsoleoutput
 
-% 注意数据不会自动保存，要单独实现；
+% 注意数据不会自动保存，要单独实现
 
-% Remember the working directory
+%% Remember the working directory
 working_directory = pwd;
 
-% parse input
-% -------------------------------------------------------------------------
+%% parse input
+%  检查输入数据是否符合要求
+%  存在toi和trial且两者是正常的结构
 
 if isfield(varargin{1},'toi') && isstruct(varargin{1}) && isstruct(varargin{2}) && isfield(varargin{2},'trial')
     cfg =  varargin{1};
@@ -32,18 +32,16 @@ else
     error('\nTRENTOOL ERROR: incorrect input values, see help!');
 end
 
-% define logging levels
-% -------------------------------------------------------------------------
+%% define logging levels
 
 LOG_INFO_MAJOR = 1;
 LOG_INFO_MINOR = 2;
 LOG_DEBUG_COARSE = 3;
 LOG_DEBUG_FINE = 4;
 
-if ~isfield(cfg, 'verbosity'), cfg.verbosity = 'info_minor'; end;
+if ~isfield(cfg, 'verbosity'), cfg.verbosity = 'info_minor'; end
 
-% check data
-% -------------------------------------------------------------------------
+%% check data
 
 msg = 'Checking data and config';
 TEconsoleoutput(cfg.verbosity, msg, LOG_INFO_MINOR);
@@ -147,7 +145,7 @@ if size(data.time,1)>size(data.time,2)
 end
 
 
-% check configuration and set defaults
+%% check configuration and set defaults
 % -------------------------------------------------------------------------
 
 if ~isfield(cfg, 'trialselect'),      cfg.trialselect = 'ACT';         end;
@@ -158,7 +156,7 @@ if ~isfield(cfg, 'minnrtrials'),      cfg.minnrtrials = 12;            end;
 
 
 
-% check optimizemethod
+%% check optimizemethod
 % -------------------------------------------------------------------------
 
 if ~isfield(cfg, 'optimizemethod'),  cfg.optimizemethod = 'ragwitz';  end;
@@ -276,7 +274,7 @@ elseif strcmp(cfg.optimizemethod, 'cao')
 end;
 
 
-% check TE parameter
+%% check TE parameter
 % -------------------------------------------------------------------------
 
 if isempty(cfg.predicttime_u),
@@ -360,7 +358,7 @@ par_state = check_set_parallel(cfg); %check for parallel and set the configurati
 
 
 
-% check if GPU-computation is requested and available on the system
+%% check if GPU-computation is requested and available on the system
 % -------------------------------------------------------------------------
 
 if strcmp(cfg.ensemblemethod, 'yes')

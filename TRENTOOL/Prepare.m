@@ -1,4 +1,4 @@
-function DataOut = TEprepare(varargin)
+function DataOut = Prepare(varargin)
 %Prepare.m 处理初始数据集
 % 检查输入数据和参数，同时优化嵌入参数，加入数据的一个子结构
 % dataout=TEprepare(cfg, data)
@@ -22,7 +22,8 @@ function DataOut = TEprepare(varargin)
 working_directory = pwd;
 
 %% parse input
-% -------------------------------------------------------------------------
+%  检查输入数据是否符合要求
+%  存在toi和trial且两者是正常的结构
 
 if isfield(varargin{1},'toi') && isstruct(varargin{1}) && isstruct(varargin{2}) && isfield(varargin{2},'trial')
     cfg =  varargin{1};
@@ -32,17 +33,15 @@ else
 end
 
 %% define logging levels
-% -------------------------------------------------------------------------
 
 LOG_INFO_MAJOR = 1;
 LOG_INFO_MINOR = 2;
 LOG_DEBUG_COARSE = 3;
 LOG_DEBUG_FINE = 4;
 
-if ~isfield(cfg, 'verbosity'), cfg.verbosity = 'info_minor'; end;
+if ~isfield(cfg, 'verbosity'), cfg.verbosity = 'info_minor'; end
 
 %% check data
-% -------------------------------------------------------------------------
 
 msg = 'Checking data and config';
 TEconsoleoutput(cfg.verbosity, msg, LOG_INFO_MINOR);
