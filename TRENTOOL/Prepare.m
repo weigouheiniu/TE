@@ -19,17 +19,18 @@ function DataOut = Prepare(varargin)
 % 注意数据不会自动保存，要单独实现
 
 %% Remember the working directory
+
 working_directory = pwd;
 
 %% parse input
 %  检查输入数据是否符合要求
+%  输入数据包括两个部分，一部分是cfg，另一部分是data
 %  存在toi和trial且两者是正常的结构
-
 if isfield(varargin{1},'toi') && isstruct(varargin{1}) && isstruct(varargin{2}) && isfield(varargin{2},'trial')
     cfg =  varargin{1};
     data = varargin{2};
 else
-    error('\nTRENTOOL ERROR: incorrect input values, see help!');
+    error('\n TRENTOOL ERROR: incorrect input values, see help!');
 end
 
 %% define logging levels
@@ -51,9 +52,9 @@ TEconsoleoutput(cfg.verbosity, msg, LOG_INFO_MINOR);
 
 % check whether time axes and trials have the same number of entries
 if iscell(data.time) % one time axis per trial
-    for tt=1:size(data.trial,2) % for each trial
+    for tt=1:size(data.trial,2) % 此处检测每次trial的长度是否与时间长度对应
         if ~( size(data.time{tt},2) == size(data.trial{tt},2) )
-            errorstr=strcat('TRENTOOL ERROR! incorrect number of samples in time axis or trial detectedin trial Nr:',...
+            errorstr=strcat('TRENTOOL ERROR! incorrect number of samples in time axis or trial detected in trial Nr:',...
                 num2str(tt),...
                 ', samples: ',num2str(size(data.trial{tt},2)),...
                 ', timeindices: ',num2str(size(data.time{tt},2)) );
@@ -66,32 +67,33 @@ else % time is a single vector
         if ~( length(data.time) == size(data.trial{tt},2) )
             disp('in trial Nr: ')
             disp(num2str(tt))
-            error('TRENTOOL ERROR! incorrect number of samples in time axis or trial detected in trial Nr:',num2str(tt));
+            errorstr=strcat('TRENTOOL ERROR! incorrect number of samples in time axis or trial detected in trial Nr: ',num2str(tt));
+            error(errorstr);
         end
     end
 end
 
 % check the data structure
-if ~isfield(data, 'trial'),
+if ~isfield(data, 'trial')
     fprintf('\n')
     error('TRENTOOL ERROR: data must be in ''.trial''-field, see help!');
-end;
-if ~isfield(data, 'time'),
+end
+if ~isfield(data, 'time')
     fprintf('\n')
     error('TRENTOOL ERROR: data contains no ''.time''-field, see help!');
-end;
-if ~isfield(data, 'label'),
+end
+if ~isfield(data, 'label')
     fprintf('\n')
     error('TRENTOOL ERROR: data contains no ''.label''-field, see help!');
-end;
-if ~isfield(data, 'fsample'),
+end
+if ~isfield(data, 'fsample')
     fprintf('\n')
     error('TRENTOOL ERROR: data contains no ''.fsample''-field, see help!');
-end;
+end
 
 % for use of fMRI Data from the function TEnifti2TRENTOOL_3D
-if isfield(data, 'datatype'),
-    TEprepare.datatype = data.datatype;
+if isfield(data, 'datatype')
+    TEprepare.datatype = data.datatype; % .datatype = 'fMRI'
     cfg.datatype = data.datatype;
     if ~isfield(data, 'outputtype')
         fprintf('\n')
@@ -99,10 +101,15 @@ if isfield(data, 'datatype'),
     else
         cfg.fmridatatype = data.outputtype;
     end
-    if ~isfield(cfg, 'trialselect'),    cfg.trialselect = 'no';    end;
-    if ~isfield(cfg, 'TheilerT'),       cfg.TheilerT = 4;           end;
-    if ~isfield(cfg, 'embedding_delay_unit'),       cfg.embedding_delay_unit = 'ACT';           end;
-
+    if ~isfield(cfg, 'trialselect')   
+        cfg.trialselect = 'no';    
+    end
+    if ~isfield(cfg, 'TheilerT')       
+        cfg.TheilerT = 4;           
+    end
+    if ~isfield(cfg, 'embedding_delay_unit')       
+        cfg.embedding_delay_unit = 'ACT';           
+    end
 
     if strcmp(cfg.embedding_delay_unit,'Volumes')==0 && strcmp(cfg.embedding_delay_unit,'ACT')==0
         fprintf('\n')
@@ -133,33 +140,29 @@ if isfield(data, 'datatype'),
 
 %         elseif strcmp(cfg.fmridatatype, '3DAsEmbed')
 %             if ~isfield(cfg, 'tau'),              cfg.caotau = 1;               end;
-        end;
+        end
 
     end
 
-end;
+end
 
 
-if size(data.time,1)>size(data.time,2)
+if size(data.time,1)>size(data.time,2) % size(X,DIM) 维度DIM的size
     data.time=data.time';
 end
 
 
 %% check configuration and set defaults
-% -------------------------------------------------------------------------
 
-if ~isfield(cfg, 'trialselect'),      cfg.trialselect = 'ACT';         end;
-if ~isfield(cfg, 'maxlag'),           cfg.maxlag = 1000;               end;
-if ~isfield(cfg, 'TEcalctype'),       cfg.TEcalctype = 'VW_ds';        end;
-if ~isfield(cfg, 'ensemblemethod'),   cfg.ensemblemethod = 'no';       end;
-if ~isfield(cfg, 'minnrtrials'),      cfg.minnrtrials = 12;            end;
-
-
+if ~isfield(cfg, 'trialselect')   ,   cfg.trialselect = 'ACT';         end
+if ~isfield(cfg, 'maxlag'),           cfg.maxlag = 1000;               end
+if ~isfield(cfg, 'TEcalctype')    ,   cfg.TEcalctype = 'VW_ds';        end
+if ~isfield(cfg, 'ensemblemethod'),   cfg.ensemblemethod = 'no';       end
+if ~isfield(cfg, 'minnrtrials')   ,   cfg.minnrtrials = 12;            end
 
 %% check optimizemethod
-% -------------------------------------------------------------------------
 
-if ~isfield(cfg, 'optimizemethod'),  cfg.optimizemethod = 'ragwitz';  end;
+if ~isfield(cfg, 'optimizemethod'),  cfg.optimizemethod = 'ragwitz';  end
 
 if strcmp(cfg.optimizemethod, 'ragwitz')
 
