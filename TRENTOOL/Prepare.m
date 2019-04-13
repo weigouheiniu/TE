@@ -162,7 +162,8 @@ if ~isfield(cfg, 'minnrtrials')   ,   cfg.minnrtrials = 12;            end
 
 %% check optimizemethod
 
-if ~isfield(cfg, 'optimizemethod'),  cfg.optimizemethod = 'ragwitz';  end
+%  注意看下Ragwitz criterion这篇文章
+if ~isfield(cfg, 'optimizemethod'),  cfg.optimizemethod = 'ragwitz';   end
 
 if strcmp(cfg.optimizemethod, 'ragwitz')
 
