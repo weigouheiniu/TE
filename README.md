@@ -1,5 +1,8 @@
 # TE
 Try to calculate Transfer Entropy
 
-- using TRENTOOL
-- using fieldtrip-20151231
+using toolbox:
+- TRENTOOL
+- fieldtrip-20151231
+
+Thanks for help.
