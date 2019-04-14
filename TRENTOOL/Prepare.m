@@ -23,9 +23,9 @@ function DataOut = Prepare(varargin)
 working_directory = pwd;
 
 %% parse input
-%  检查输入数据是否符合要求
-%  输入数据包括两个部分，一部分是cfg，另一部分是data
-%  存在toi和trial且两者是正常的结构
+% 检查输入数据是否符合要求
+% 输入数据包括两个部分，一部分是cfg，另一部分是data
+% 存在toi和trial且两者是正常的结构
 if isfield(varargin{1},'toi') && isstruct(varargin{1}) && isstruct(varargin{2}) && isfield(varargin{2},'trial')
     cfg =  varargin{1};
     data = varargin{2};
@@ -162,12 +162,13 @@ if ~isfield(cfg, 'minnrtrials')   ,   cfg.minnrtrials = 12;            end
 
 %% check optimizemethod
 
-%  注意看下Ragwitz criterion这篇文章
+% 注意看下Ragwitz criterion这篇文章
 if ~isfield(cfg, 'optimizemethod'),  cfg.optimizemethod = 'ragwitz';   end
 
-if strcmp(cfg.optimizemethod, 'ragwitz')
+if strcmp(cfg.optimizemethod, 'ragwitz') % ?
 
-    % check input for ragwitz
+ % ---------------------------这里有些不懂--------------------------
+    % check input for ragwitz 
     if ~isfield(cfg, 'ragtausteps'), cfg.ragtausteps = 10;  end
 
     if isfield(cfg, 'ragtausteps')
@@ -213,7 +214,7 @@ if strcmp(cfg.optimizemethod, 'ragwitz')
     end
 
 
-    if ~isfield(cfg, 'ragdim'),
+    if ~isfield(cfg, 'ragdim')
         cfg.ragdim = 1:10;
     else
         ragdimsort=sort(cfg.ragdim);
@@ -225,16 +226,16 @@ if strcmp(cfg.optimizemethod, 'ragwitz')
         if size(cfg.ragdim,1)>size(cfg.ragdim,2)
             cfg.ragdim=cfg.ragdim';
         end
-    end;
+    end
 
 elseif strcmp(cfg.optimizemethod, 'cao')
 
-    if ~isfield(cfg, 'caokth_neighbors'), cfg.caokth_neighbors = 4;        end;
-    if ~isfield(cfg, 'kth_neighbors'),  cfg.kth_neighbors = cfg.caokth_neighbors;  end;
+    if ~isfield(cfg, 'caokth_neighbors'), cfg.caokth_neighbors = 4;                end
+    if ~isfield(cfg, 'kth_neighbors'),  cfg.kth_neighbors = cfg.caokth_neighbors;  end
 
-    if ~isfield(cfg, 'tau'),              cfg.caotau = 1.5;               end;
+    if ~isfield(cfg, 'tau'),              cfg.caotau = 1.5;                        end
     % check input for cao
-    if ~isfield(cfg, 'caodim'),
+    if ~isfield(cfg, 'caodim')
         cfg.caodim = [1,2,3,4,5,6,7,8,9,10];
     else
 
@@ -256,7 +257,7 @@ elseif strcmp(cfg.optimizemethod, 'cao')
             fprintf('\n')
             error('TRENTOOL ERROR: cfg.caodim must contain at least 5 entries, see help!');
         end
-    end;
+    end
 
     if size(cfg.caodim,1)>size(cfg.caodim,2)
         cfg.caodim=cfg.caodim';
@@ -264,24 +265,16 @@ elseif strcmp(cfg.optimizemethod, 'cao')
         cfg.caotau=cfg.caotau';
     elseif size(cfg.caokth_neighbors,1)>size(cfg.caokth_neighbors,2)
         cfg.caokth_neighbors=cfg.caokth_neighbors';
-    end;
-
-    fprintf('\n\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n');
-    fprintf('XX                                                                        XX\n');
-    fprintf('XX  THE CAO CRITERION IS DEPRECATED AS AN OPTION IN TRENTOOL VERSIONS 3.0   XX\n');
-    fprintf('XX  AND HIGHER. SEE HELP.                                                 XX\n');
-    fprintf('XX                                                                        XX\n');
-    fprintf('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n');
-
+    end
+    fprintf('THE CAO CRITERION IS DEPRECATED AS AN OPTION IN TRENTOOL VERSIONS 3.0 \n');
     pause(10);
 
-end;
-
+end
 
 %% check TE parameter
-% -------------------------------------------------------------------------
 
-if isempty(cfg.predicttime_u),
+% prdicttime_u, time ahead for the advance prediction
+if isempty(cfg.predicttime_u) % 从源头到动作间的有效延迟
     fprintf('\n')
     error('TRENTOOL ERROR: specify cfg.predicttime_u, see help!');
 elseif ~isscalar(cfg.predicttime_u)
@@ -289,11 +282,11 @@ elseif ~isscalar(cfg.predicttime_u)
     error('TRENTOOL ERROR: cfg.predicttime_u must be a scalar, see help!');
 end
 
+% 设置最邻近的k值
+if ~isfield(cfg, 'kth_neighbors'),  cfg.kth_neighbors = 4;  end
 
-if ~isfield(cfg, 'kth_neighbors'),  cfg.kth_neighbors = 4;  end;
-
-if ~isfield(cfg, 'TheilerT'),       cfg.TheilerT = 'ACT';   end;
-if ~strcmp(cfg.TheilerT, 'ACT');
+if ~isfield(cfg, 'TheilerT'),       cfg.TheilerT = 'ACT';   end 
+if ~strcmp(cfg.TheilerT, 'ACT') 
     if ~isscalar(cfg.TheilerT)
         fprintf('\n')
         error('TRENTOOL ERROR: cfg.TheilerT must be a scalar, see help!');
@@ -304,17 +297,16 @@ if ~strcmp(cfg.TEcalctype,'VW_ds')
     fprintf('\n')
     error(['TRENTOOL ERROR: Please provide "VW_ds" as estimator in ' ...
         '"cfg.TEcalctype". Older/other estimators are no longer supported. See help!'])
-end;
-
+end
 
 % check if channel or channelcombinations are defined
-if ~isfield(cfg, 'channel') && ~isfield(cfg, 'sgncmb') ,
+if ~isfield(cfg, 'channel') && ~isfield(cfg, 'sgncmb') 
     fprintf('\n')
     error('TRENTOOL ERROR: specify cfg.channel OR cfg.sgncmb, see help!');
-elseif isfield(cfg, 'channel') && isfield(cfg, 'sgncmb') ,
+elseif isfield(cfg, 'channel') && isfield(cfg, 'sgncmb') 
     fprintf('\n')
     error('TRENTOOL ERROR: specify cfg.channel OR cfg.sgncmb, see help!');
-elseif isfield(cfg, 'channel') && ~isfield(cfg, 'sgncmb') ,
+elseif isfield(cfg, 'channel') && ~isfield(cfg, 'sgncmb') 
     if size(cfg.channel,2)>size(cfg.channel,1)
         cfg.channel=cfg.channel';
     end
@@ -322,25 +314,24 @@ elseif isfield(cfg, 'channel') && ~isfield(cfg, 'sgncmb') ,
     % a warning because of some issue if only a subselection of
     % channels enters the analysis -> PW: I removed this warning, I can't
     % find any issues
-    %if max(size(cfg.channel))<size(data.trial{1},1) % If there are less channels
-    %    fprintf('\nTRENTOOL WARNING: your are specifying a subselection of channels \n - please use cfg.sgncmb to specify channelcombinations directly');
+    % if max(size(cfg.channel))<size(data.trial{1},1) % If there are less channels
+    % fprintf('\nTRENTOOL WARNING: your are specifying a subselection of channels \n - please use cfg.sgncmb to specify channelcombinations directly');
     %end
-elseif ~isfield(cfg, 'channel') && isfield(cfg, 'sgncmb') ,
+elseif ~isfield(cfg, 'channel') && isfield(cfg, 'sgncmb') 
     if size(cfg.sgncmb) ~= 2
         fprintf('\n')
         error('TRENTOOL ERROR: cfg.sgncmb has wrong dimensions, see help!');
     end
     channelselect = 2;
-end;
-
+end
 
 % check the format of input vectors
 if size(cfg.toi,1) > 2 || size(cfg.toi,2) >2
     fprintf('\n')
     error('TRENTOOL ERROR: cfg.toi has more than two entries');
 end
-if size(cfg.toi,1)>size(cfg.toi,2)
-    cfg.toi=cfg.toi';
+if size(cfg.toi,1) > size(cfg.toi,2)
+    cfg.toi=cfg.toi'; % cfg.toi'
 end
 
 
