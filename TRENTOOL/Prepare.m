@@ -1,20 +1,21 @@
 function DataOut = Prepare(varargin)
-%Prepare.m 处理初始数据集
+
+%% Prepare.m 处理初始数据集
 % 检查输入数据和参数，同时优化嵌入参数，加入数据的一个子结构
 % dataout=TEprepare(cfg, data)
 
 % 用了几个Matlab的工具箱：
-% TSTOOL 用于KSG estimator需要的最邻近搜索* DEPENDENCIES
+% TSTOOL 用于KSG estimator需要的最邻近搜索
 % signal processing toolbox
 % statistic toolbox
 % parallel computing toolbox 用于分布式计算
 
 % 用了如下几个函数：
-%   TEactdetect
-%   TEchannelselect
-%   TEtrialselect
-%   TEwait
-%   TEconsoleoutput
+%  TEactdetect
+%  TEchannelselect
+%  TEtrialselect
+%  TEwait
+%  TEconsoleoutput
 
 % 注意数据不会自动保存，要单独实现
 
@@ -23,6 +24,7 @@ function DataOut = Prepare(varargin)
 working_directory = pwd;
 
 %% parse input
+
 % 检查输入数据是否符合要求
 % 输入数据包括两个部分，一部分是cfg，另一部分是data
 % 存在toi和trial且两者是正常的结构
@@ -354,7 +356,6 @@ par_state = check_set_parallel(cfg); %check for parallel and set the configurati
 
 
 %% check if GPU-computation is requested and available on the system
-% -------------------------------------------------------------------------
 
 if strcmp(cfg.ensemblemethod, 'yes')
 
@@ -363,7 +364,7 @@ if strcmp(cfg.ensemblemethod, 'yes')
         result = strrep(result, '%', '%%');
         fprintf(result);
         error('TRENTOOL ERROR: You requested ensemble method with GPU calculation. No Nvidia GPU could be detected on your system. See help!');
-    end;
+    end
     clear status result;
 
     % set ensemble method, so InteractionDelayReconstruction_calculate can
@@ -374,7 +375,9 @@ else
 end
 
 %% building channelpairs
-% -------------------------------------------------------------------------
+% 这部分也有些模糊
+% channelcombi是什么东西
+
 msg = 'Building channelpairs';
 TEconsoleoutput(cfg.verbosity, msg, LOG_INFO_MINOR);
 
@@ -395,7 +398,7 @@ TEprepare.channellabel = data.label;
 TEconsoleoutput(cfg.verbosity, channelcombilabel, LOG_INFO_MINOR, 'Channelcombinations:');
 
 %% read data
-% -------------------------------------------------------------------------
+
 msg = 'Reading data';
 TEconsoleoutput(cfg.verbosity, msg, LOG_INFO_MINOR);
 
@@ -424,7 +427,7 @@ end
 % find correct indices for the samples in alltime/cfg.toi
 % to be used later
 % look in the time dimension of the data
-timeindices=zeros(1,2);
+timeindices=zeros(1,2);                                                                        
 for ii = 1:size(cfg.toi,2)
     [col]=nearest(alltime, cfg.toi(ii));
     timeindices(ii)=col;
@@ -442,7 +445,6 @@ else
 end
 
 %% define ACT and trials
-% ------------------------------------------------------------------------
 
 % calculate ACT
 TEconsoleoutput(cfg.verbosity, 'Calculating ACT', LOG_INFO_MINOR);
@@ -480,11 +482,8 @@ else
 end
 
 %% optimize embedding parameters
-% -------------------------------------------------------------------------
-
 
 % Ragwitz criterion
-% ------------------
 
 if isfield(cfg, 'datatype')
     if strcmp(cfg.datatype, 'fMRI') && strcmp(cfg.fmridatatype, '3DAsEmbed')
@@ -500,13 +499,12 @@ else
         % define channel on which ragwitz is performed
         targetchannel = 2; % this is index of the target channel in the matrices
 
-
         % define max tau in samples
         maxact = min([max(max(ACT(:,targetchannel,:))) cfg.actthrvalue]);
         maxtau = ceil( maxact * max(cfg.ragtau) );
         emb_length = (max(cfg.ragdim)-1)*maxtau;
         avail_samples = TEprepare.timeindices(2)-TEprepare.timeindices(1);
-        if strcmp(cfg.TheilerT, 'ACT');
+        if strcmp(cfg.TheilerT, 'ACT')
             theiler_corr = maxact;
         else
             theiler_corr = cfg.TheilerT;
@@ -555,7 +553,7 @@ else
             if ~par_state
                for nt = 1:nrtrials(channel,targetchannel) % loop over trials
 
-                    if strcmp(cfg.TheilerT, 'ACT');
+                    if strcmp(cfg.TheilerT, 'ACT')
                         TheilerT = ACT(channel,2,trials{channel,targetchannel}(nt));
                     else
                         TheilerT = cfg.TheilerT;
@@ -601,7 +599,7 @@ else
 
                     % define trainingpoints for Ragwitz criteria depending on
                     % TheilerT
-                    if strcmp(cfg.TheilerT, 'ACT');
+                    if strcmp(cfg.TheilerT, 'ACT')
                         TheilerT = ACT(channel,2,trials{channel,targetchannel}(nt));
                     else
                         TheilerT = cfg.TheilerT;
@@ -824,17 +822,18 @@ if isfield(cfg,'TEparallel') && ft_hastoolbox('DCT') && isfield(cfg.TEparallel,'
         cfg.TEparallel.workers = max_workers;
     end
 
-    if  matlabpool('size')== 0
+    if  parpool('size')== 0
 
         if cfg.TEparallel.workers <= max_workers
-            matlabpool(cfg.TEparallel.workers)
+            parpool(cfg.TEparallel.workers);
         else
-            matlabpool(max_workers)
+            parpool(max_workers);
         end
-
-    else if matlabpool('size') > cfg.TEparallel.workers
-            matlabpool close;
-            matlabpool(cfg.TEparallel.workers)
+        
+    else
+        if parpool('size') > cfg.TEparallel.workers
+            parpool close;
+            parpool(cfg.TEparallel.workers)
         end
     end
 else
