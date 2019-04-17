@@ -64,7 +64,7 @@ cfgTESS.fileidout = strcat(OutputDataPath,'Lorenzdata_1->2_');
 
 % calculation - scan over specified values for u
 
-TGA_results = IDR_calculate(cfgTEP.cfgTESS,data);
+TGA_results = IDR_calculate(cfgTEP,cfgTESS,data);
 save([OutputDataPath 'Lorenz_1->2_TGA_results_analyzed'],'TGAresult');
 
 %% optional: perform a post hoc correction for cadcade effects and simple common drive effects
