@@ -64,7 +64,7 @@ cfgTESS.fileidout = strcat(OutputDataPath,'Lorenzdata_1->2_');
 
 % calculation - scan over specified values for u
 
-TGA_results = IDR_calculate(cfgTEP.cfgTESS,data);
+TGA_results = InteractionDelayReconstruction_calculate(cfgTEP.cfgTESS,data);
 save([OutputDataPath 'Lorenz_1->2_TGA_results_analyzed'],'TGAresult');
 
 %% optional: perform a post hoc correction for cadcade effects and simple common drive effects
@@ -84,19 +84,39 @@ load('/Users/anranknight/Documents/GitHub/TE/Data/lorenz_layout');
 cfgPLOT = [];
 
 cfgPLOT.layout = lay_Lorenz;
-cfgPLOT.electrodes = 'highlights';
-cfgPLOT.statstype = 1; 
-% 1: corrected; 2: uncorrected ; 3: 1-pval; 4: rawdistance
-cfgPLOT.alpha = 0.05;
-cfgPLOT.arrowpos = 1;
-cfgPLOT.showlabels = 'yes';
-cfgPLOT.electrodes = 'on';
-cfgPLOT.hlmarker = 'o';
-cfgPLOT.hlcolor = [0 0 0];
-cfgPLOT. hlmarkersize = 4;
-cfgPLOT. arrowcolorpos = [1 0 0];
-
+cfgPLOT.electrodes =
+¡¯highlights ¡¯;
+cfgPLOT.statstype
+=
+1;
+% 1: corrected; 2: uncorrected ; 3: 1-pval;
+4: rawdistance
+cfgPLOT.alpha
+=
+0.05;
+cfgPLOT.arrowpos
+=
+1;
+cfgPLOT.showlabels
+=
+¡¯yes ¡¯;
+cfgPLOT.electrodes
+=
+¡¯on¡¯;
+cfgPLOT.hlmarker
+=
+¡¯o¡¯;
+cfgPLOT.hlcolor
+=
+[0
+0 0];
+cfgPLOT. hlmarkersize
+=
+4;
+cfgPLOT. arrowcolorpos =
+[1
+0 0];
 figure;
-TEplot2D(cfgPLOT , TGA_results_analyzed_GA);
+TEplot2D(cfgPLOT , TGA_results_analyzed_GA )
 
 

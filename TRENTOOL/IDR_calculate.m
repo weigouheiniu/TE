@@ -2,33 +2,6 @@ function TEpermtest = InteractionDelayReconstruction_calculate(cfgTEP,cfgTESS,da
 
 % InteractionDelayReconstruction_calculate
 % Graph Timing calculation based on TE with scanned prediction times u
-% 
-% This function has to be supplied with the folowing INPUT:
-%
-% data      -    the data in the fieldtrip raw data format; see TEprepare for more
-%           details
-% cfgTEP    -    a configuration structure that has all the fields required for
-%           TEprepare; see TEprepare for more details. The only difference is that instead of
-%           cfg.predictime_u which is a single number, cfg.predicttimemin_u
-%           cfg.predicttimemax_u,cfg.predicttimestepsize
-%           have to be supplied, indicating the minimum and maximum prediction time of
-%           inteterest and the stepsize of the resolution
-% cfgTESS    -   a configuration structure that has all the fields required
-%           for TEsurrogatestats
-%
-% The OUTPUT TEpermtest is a structure containing estimated TE values and 
-% results for permutation testing using the optimal interaction delay for 
-% each channel combination.
-
-
-% CHANGELOG
-% 2013-25-01 PW: added GPU branch/ensemblemethod
-% 2013-27-06 PW: added check for group analysis
-% 2014-27-11 PW: changed interaction delay reconstruction: u is now optimized w/o surrogate
-%		 testing, surrogate testing is done in a second step using the reconstructed
-%		 interaction delay
-% 2013-27-06 PW: TEpermtest is saved to disk by this function
-
 
 %% check input
 if nargin ~= 3
@@ -39,8 +12,7 @@ end
 LOG_INFO_MAJOR = 1;
 LOG_INFO_MINOR = 2;
 
-if ~isfield(cfgTEP, 'verbosity'), cfgTEP.verbosity = 'info_minor'; end;
-
+if ~isfield(cfgTEP, 'verbosity'), cfgTEP.verbosity = 'info_minor'; end
 %% checks and parameter preparations
 
 % check if data was prepared for later group statistics
@@ -105,7 +77,7 @@ msg = '################### PREPARING DATA FOR TE ANALYSIS';
 TEconsoleoutput(cfgTEP.verbosity, msg, LOG_INFO_MAJOR);
 
 cfgTEP.predicttime_u = cfgTEP.predicttimemax_u;  % fix config
-dataprep = TEprepare(cfgTEP,data);
+dataprep = Prepare(cfgTEP,data);
 clear data;
 
 %% find optimal interaction delays
@@ -125,7 +97,7 @@ cfgTESS.fileidout=strcat(cfgTESS.fileidout,'_RAG4_TGA_opt_u');
 if strcmp(dataprep.TEprepare.ensemblemethod,'yes')
     TEpermtest=TEsurrogatestats_ensemble(cfgTESS,dataprep);
 else
-    TEpermtest=TEsurrogatestats(cfgTESS,dataprep);
+    TEpermtest = Estimation(cfgTESS,dataprep);
 end
 
 % add opt u vector to TEpermvalues matrix

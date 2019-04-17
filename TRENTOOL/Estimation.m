@@ -126,7 +126,7 @@ if strcmp(cfg.shifttest , 'yes')  && strcmp(cfg.extracond , 'Faes_Method')
 end
 if strcmp(cfg.shifttest , 'yes')
     if ~isfield(cfg, 'shifttype'),    cfg.shifttype = 'predicttime';        end
-    if ~isfield(cfg, 'shifttesttype'),  cfg.shifttesttype = 'TE > TEshift'; end
+    if ~isfield(cfg, 'shifttesttype'),  cfg.shifttesttype = 'TE>TEshift';   end
     if strcmp(cfg.shifttesttype , 'TE>TEshift') == 0 && strcmp(cfg.shifttesttype , 'TEshift>TE') == 0
         fprintf('\n')
         error('TRENTOOL ERROR: wrong cfg.shifttesttype - use ''TE>TEshift'' or ''TEshift>TE'', see help!');
@@ -310,12 +310,12 @@ if strcmp(cfg.shifttest, 'yes')
     cfg.permstatstype = 'indepsamplesT';
     tailtype = cfg.tail;
     cfg.tail = 1;
-    if strcmp(cfg.shifttesttype, 'TE > TEshift')
+    if strcmp(cfg.shifttesttype, 'TE>TEshift')
         alpha = cfg.alpha;
         cfg.alpha = 0.05;
         TEpermshift = TEperm(cfg,TEresult,TEshift);
         cfg.alpha = alpha;
-    elseif strcmp(cfg.shifttesttype, 'TEshift > TE')
+    elseif strcmp(cfg.shifttesttype, 'TEshift>TE')
         alpha = cfg.alpha;
         cfg.alpha = 0.1;
         TEpermshift = TEperm(cfg,TEshift,TEresult);
