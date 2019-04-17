@@ -608,22 +608,22 @@ else % parallel part
                 elseif strcmp(cfg.surrogatetype, 'trialreverse')
                     trial2 = t4t;
                     timespan = timeindices(1):timeindices(2);
-                    flip(timespan,2)
+                    flipdim(timespan,2)
                     
                 elseif strcmp(cfg.surrogatetype, 'blockreverse1')
                     trial2 = t4t;
                     cutpoint = round( (timeindices(2)-timeindices(1)+1) * rand(1));
-                    timespan =flip([cutpoint:timeindices(2),timeindices(1):cutpoint-1],2);
+                    timespan =flipdim([cutpoint:timeindices(2),timeindices(1):cutpoint-1],2);
                     
                 elseif strcmp(cfg.surrogatetype, 'blockreverse2')
                     trial2 = t4t;
                     cutpoint = round( (timeindices(2)-timeindices(1)+1) * rand(1));
-                    timespan =[flip(cutpoint:timeindices(2),2),timeindices(1):cutpoint-1];
+                    timespan =[flipdim(cutpoint:timeindices(2),2),timeindices(1):cutpoint-1];
                     
                 elseif strcmp(cfg.surrogatetype, 'blockreverse3')
                     trial2 = t4t;
                     cutpoint = round( (timeindices(2)-timeindices(1)+1) * rand(1));
-                    timespan =[cutpoint:timeindices(2),flip(timeindices(1):cutpoint-1,2)];
+                    timespan =[cutpoint:timeindices(2),flipdim(timeindices(1):cutpoint-1,2)];
                 elseif strcmp(cfg.surrogatetype, 'swapneighbors')
                     if mod(t4t,2)==0
                         trial2 = t4t-1;

@@ -316,7 +316,7 @@ elseif isfield(cfg, 'channel') && ~isfield(cfg, 'sgncmb')
     % a warning because of some issue if only a subselection of
     % channels enters the analysis -> PW: I removed this warning, I can't
     % find any issues
-    % if max(size(cfg.channel))<size(data.trial{1},1) % If there are less channels
+    % if max(size(cfg.channel)) < size(data.trial{1},1) % If there are less channels
     % fprintf('\nTRENTOOL WARNING: your are specifying a subselection of channels \n - please use cfg.sgncmb to specify channelcombinations directly');
     %end
 elseif ~isfield(cfg, 'channel') && isfield(cfg, 'sgncmb') 
@@ -336,8 +336,6 @@ if size(cfg.toi,1) > size(cfg.toi,2)
     cfg.toi=cfg.toi'; % cfg.toi'
 end
 
-
-
 % check alternative ways of trial selection and the required related inputs
 if strcmp(cfg.trialselect, 'ACT')
     if isempty(cfg.actthrvalue) || isempty(cfg.minnrtrials)
@@ -352,8 +350,6 @@ elseif strcmp(cfg.trialselect, 'range')
 end
 
 par_state = check_set_parallel(cfg); %check for parallel and set the configuration
-
-
 
 %% check if GPU-computation is requested and available on the system
 

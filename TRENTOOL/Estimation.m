@@ -125,8 +125,8 @@ if strcmp(cfg.shifttest , 'yes')  && strcmp(cfg.extracond , 'Faes_Method')
     error('TRENTOOL ERROR: you requested Faes method AND the conduction of a shift test. Set "cfg.shifttest = no" as Both methods are mutually exclusive, see help!');
 end
 if strcmp(cfg.shifttest , 'yes')
-    if ~isfield(cfg, 'shifttype'),    cfg.shifttype = 'predicttime'; end;
-    if ~isfield(cfg, 'shifttesttype'),  cfg.shifttesttype = 'TE>TEshift'; end;
+    if ~isfield(cfg, 'shifttype'),    cfg.shifttype = 'predicttime';        end
+    if ~isfield(cfg, 'shifttesttype'),  cfg.shifttesttype = 'TE > TEshift'; end
     if strcmp(cfg.shifttesttype , 'TE>TEshift') == 0 && strcmp(cfg.shifttesttype , 'TEshift>TE') == 0
         fprintf('\n')
         error('TRENTOOL ERROR: wrong cfg.shifttesttype - use ''TE>TEshift'' or ''TEshift>TE'', see help!');
@@ -147,7 +147,7 @@ else
         fprintf('\n')
         error(['TRENTOOL ERROR: ',cfg.optdimusage,' is a wrong input for cfg.optdimusage , see help!'])
     end
-end;
+end
 
 % check dim
 if ~isfield(cfg, 'dim')
@@ -184,8 +184,7 @@ else
                 cfg.dim, data.TEprepare.optdim)
         end
     end
-end;
-
+end
 
 % check tau
 if ~isfield(cfg, 'tau')
@@ -217,7 +216,6 @@ else
 
 end
 
-
 % check TE parameter
 if isempty(cfg.predicttime_u)
     error('TRENTOOL ERROR: specify cfg.predicttime_u, see help!');
@@ -225,18 +223,17 @@ elseif length(cfg.predicttime_u) == 1
     cfg.predicttime_u = repmat(cfg.predicttime_u, size(data.TEprepare.channelcombi,1), 1);
 elseif length(cfg.predicttime_u) ~= size(data.TEprepare.channelcombi,1)
     error('TRENTOOL ERROR: cfg.predicttime_u should either be a scalar or a vector of size [n channel combinations X 1], see help!');
-end;
+end
 
-if ~isfield(cfg, 'kth_neighbors'),  cfg.kth_neighbors = 4;  end;
+if ~isfield(cfg, 'kth_neighbors'),  cfg.kth_neighbors = 4;  end
 
-if ~isfield(cfg, 'TheilerT'),       cfg.TheilerT = 'ACT';   end;
-if ~strcmp(cfg.TheilerT, 'ACT');
+if ~isfield(cfg, 'TheilerT'),       cfg.TheilerT = 'ACT';   end
+if ~strcmp(cfg.TheilerT, 'ACT')
     if size(cfg.TheilerT,1)>1 || size(cfg.TheilerT,2)>1
         fprintf('\n')
         error('TRENTOOL ERROR: cfg.TheilerT must include a scalar, see help!');
     end
 end
-
 
 % check the format of input vectors
 if size(cfg.toi,1)>size(cfg.toi,2)
@@ -248,13 +245,7 @@ elseif size(cfg.kth_neighbors,1)>1 || size(cfg.kth_neighbors,2)>1
     error('TRENTOOL ERROR: cfg.dim must include a scalar, see help!');
 end
 
-
-
-
-
-
 %% get channels, ACT and trials from the cfg.TEprepare
-% ------------------------------------------------------------------------
 
 cfg.permtest.channelcombi = data.TEprepare.channelcombi;
 cfg.permtest.channelcombilabel = data.TEprepare.channelcombilabel ;
@@ -266,13 +257,12 @@ nrtrials=data.TEprepare.nrtrials;
 cfg.permtest.trials=trials;
 cfg.permtest.nrtrials=nrtrials;
 
-
 %% check nr of permutations
-% -------------------------------------------------------------------------
+
 msg = 'Checking number of permutations';
 TEconsoleoutput(cfg.verbosity, msg, LOG_INFO_MINOR);
 
-if isfield(cfg, 'numpermutation') && strcmp(cfg.numpermutation, 'findDelay');
+if isfield(cfg, 'numpermutation') && strcmp(cfg.numpermutation, 'findDelay')
     cfg.numpermutation = 0;
     cfg.shifttest = 0;
 else
@@ -280,13 +270,13 @@ else
 end
 
 %% start calculating TE
-% -------------------------------------------------------------------------
+
 warning('off','all')        % otherwise parfor loops throw warnings
 cfg.calctime = 'yes';
 
 % for unshuffled data
 % ----------------------
-msg = 'Calculating transfer entropy for unshuffled data';
+msg = 'Calculating transfer entropy for unshuffled data...';
 TEconsoleoutput(cfg.verbosity, msg, LOG_INFO_MINOR);
 cfg.shuffle = 'no';
 [TEresult] = transferentropy(cfg,data);
@@ -320,12 +310,12 @@ if strcmp(cfg.shifttest, 'yes')
     cfg.permstatstype = 'indepsamplesT';
     tailtype = cfg.tail;
     cfg.tail = 1;
-    if strcmp(cfg.shifttesttype, 'TE>TEshift')
+    if strcmp(cfg.shifttesttype, 'TE > TEshift')
         alpha = cfg.alpha;
         cfg.alpha = 0.05;
         TEpermshift = TEperm(cfg,TEresult,TEshift);
         cfg.alpha = alpha;
-    elseif strcmp(cfg.shifttesttype, 'TEshift>TE')
+    elseif strcmp(cfg.shifttesttype, 'TEshift > TE')
         alpha = cfg.alpha;
         cfg.alpha = 0.1;
         TEpermshift = TEperm(cfg,TEshift,TEresult);
@@ -334,11 +324,8 @@ if strcmp(cfg.shifttest, 'yes')
     cfg.permstatstype = permstatstype;
     cfg.tail=tailtype;
 
-
-
 %     %$ML
 %     save(strcat(cfg.fileidout,'_TEpermshift'), 'TEpermshift','-v7.3');
-
 
     % analyze shift test
     TEconsoleoutput(cfg.verbosity, 'Analyzing shift test', LOG_INFO_MINOR);
@@ -414,7 +401,6 @@ cfg = rmfield(cfg, 'calctime');
 warning('on','all')
 
 %% permutation tests
-% -------------------------------------------------------------------------
 
 TEpermtest.dimord = 'chanpair_value';
 TEpermtest.cfg = cfg;
@@ -426,8 +412,6 @@ TEpermtest.TEmat = TEresult.TEmat;
 TEpermtest.MImat = TEresult.MImat;
 
 %% save results
-% -------------------------------------------------------------------------
-
 
 % fprintf('\nSaving ...')
 % fprintf('\n\tresults of TE estimation')
@@ -438,8 +422,8 @@ TEpermtest.MImat = TEresult.MImat;
 % fprintf(' - ok');
 
 %% Returning to the working directory
-cd(working_directory1)
 
+cd(working_directory1)
 
 return;
 
