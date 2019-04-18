@@ -112,13 +112,11 @@ end
 
 msg = 'Saving results of TE estimation and surrogate testing';
 TEconsoleoutput(cfgTEP.verbosity, msg, LOG_INFO_MINOR);
-save(strcat(cfgTESS.fileidout,'_time',num2str(cfgTEP.toi(1)),'-',num2str(cfgTEP.toi(2)),'s_TEpermtest_output.mat'), ...
-    'TEpermtest','-v7.3');
-
+% save(strcat(cfgTESS.fileidout,'_time',num2str(cfgTEP.toi(1)),'-',num2str(cfgTEP.toi(2)),'s_TEpermtest_output.mat'),'TEpermtest','-v7.3');
+save('D:\GitHub\TE\Results\TEpermtest_output_data_1','TEpermtest','-v7.3');
 %%
 
 t=toc(t_total);
 msg = sprintf( ...
-    'Thank you for using this transfer entropy tool!\n\nTRANSFER ENTROPY CALCULATION ENDED: %s \nCALCULATION TOOK %.0f MINUTES (%.0f SECONDS)', ...
-    datestr(now), t/60, t);
+    'Thank you for using this transfer entropy tool!\n\nTRANSFER ENTROPY CALCULATION ENDED: %s \nCALCULATION TOOK %.0f MINUTES (%.0f SECONDS)',datestr(now), t/60, t);
 TEconsoleoutput(cfgTEP.verbosity, msg, LOG_INFO_MAJOR);

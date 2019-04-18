@@ -1,13 +1,13 @@
 %% set paths
 
-addpath('/Users/anranknight/Documents/GitHub/TE/TRENTOOL');
-addpath('/Users/anranknight/Documents/GitHub/TE/fieldtrip');
+addpath('D:\GitHub\TE\TRENTOOL');
+addpath('D:\GitHub\TE\fieldtrip');
 ft_defaults;
 
 %% define data paths
 
-OutputDataPath = '/Users/anranknight/Documents/GitHub/TE/Results/';
-InputDataPath = '/Users/anranknight/Documents/GitHub/TE/Data/lorenz_1-2_45ms.mat';
+OutputDataPath = 'D:\GitHub\TE\Results\';
+InputDataPath = 'D:\GitHub\TE\Data\lorenz_1-2_45ms.mat';
 
 load(InputDataPath);
 
@@ -66,8 +66,8 @@ cfgTESS.fileidout = strcat(OutputDataPath,'Lorenzdata_1->2_');
 % calculation - scan over specified values for u
 
 TGA_results = IDR_calculate(cfgTEP,cfgTESS,data);
-save([OutputDataPath 'Lorenz_1->2_TGA_results.mat'],'TGA_results');
-
+save([OutputDataPath 'Lorenz_TGA_results.mat'],'TGA_results');
+% save('D:\GitHub\TE\Results\TGA_results_1.mat','TGA_results');
 %% optional: perform a post hoc correction for cadcade effects and simple common drive effects
 
 cfgGA = [];
@@ -75,12 +75,13 @@ cfgGA = [];
 cfgGA.threshold = 3;
 cfgGA.cmc = 1;
 
-TGA_results_GA = TEgraphanalysis(cfgGA,TGA_results_analyzed);
-save([OutputDataPath 'Lorenz_1->2_TGA_results_analyzed_GA.mat'],'TGA_results_GA');
+% TGA_results_GA = TEgraphanalysis(cfgGA,TGA_results_analyzed);
+TGA_results_GA = TEgraphanalysis(cfgGA,TGA_results);
+save([OutputDataPath 'TGA_results_analyzed_GA.mat'],'TGA_results_GA');
 
 %% plotting
 
-load('/Users/anranknight/Documents/GitHub/TE/Data/lorenz_layout.mat');
+load('D:\GitHub\TE\Data\lorenz_layout.mat');
 
 cfgPLOT = [];
 
@@ -98,6 +99,7 @@ cfgPLOT. hlmarkersize = 4;
 cfgPLOT. arrowcolorpos = [1 0 0];
 
 figure;
-TEplot2D(cfgPLOT , TGA_results_analyzed_GA);
+% TEplot2D(cfgPLOT,TGA_results_analyzed_GA);
+TEplot2D(cfgPLOT,TGA_results_GA);
 
 
