@@ -98,6 +98,6 @@ cfgPLOT. hlmarkersize = 4;
 cfgPLOT. arrowcolorpos = [1 0 0];
 
 figure;
-TEplot2D(cfgPLOT,TGA_results_analyzed_GA);
+TEplot2D(cfgPLOT , TGA_results_analyzed_GA);
 
 
