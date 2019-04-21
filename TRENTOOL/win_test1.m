@@ -15,7 +15,7 @@ load(InputDataPath);
 
 cfgTEP = [];
 
-%% data 
+%% data     
 % time of interest
 cfgTEP.toi = [min(data.time{1,1}),max(data.time{1,1})];
 % channels to be analyzed
